@@ -10,7 +10,6 @@
 #include <stdio.h>
 #define EPS 3.0e-14
 #define MAXIT 10
-
 using namespace std;
 
 
@@ -79,6 +78,7 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
     /*func(double x1,double y1, double z1, double x2, double y2, double z2):
      * Function that sets up the integral we're going to integrate.
       This is a six-dimensional integral.*/
+    //cout<<_theta(1) <<endl;
 
     double alpha = 2.0;
     double tol = 1E-10; //Tolerance: |r1-r2|=0 can cause problems, so have to check.
@@ -94,7 +94,7 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
     else{
     double exp1 = -2*alpha*sqrt(r1);
     double exp2 = -2*alpha*sqrt(r2);
-    return exp(exp1+exp2)/deno;
+    return (sin(theta1)*sin(theta2)*(r1*r1)*(r2*r2)*exp(exp1+exp2))/deno;
     }
 }
 

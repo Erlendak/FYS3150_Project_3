@@ -2,14 +2,18 @@
 #include <gauss_legendre.h>
 #include <gauss_lag.h>
 #include <cmath>
+#include <armadillo>
 
 using namespace std;
+using namespace arma;
 
 int main()
 {
 //task3a();
 double pi = 3.14159265;
-int N = 10;
+
+int N = 20;
+//double dpi = pi/N;
 //   reserve space in memory for vectors containing the mesh points
 //   weights and function values for the use of the gauss-legendre
 //   method
@@ -27,17 +31,20 @@ gauss_laguerre(xgl,wgl, N, alf);
 
 //   evaluate the integral with the Gauss-Laguerre method
 //   Note that we initialize the sum
+
+vec _theta = linspace(0,pi,N+1);
+vec _phi =linspace(0,2*pi,N+1);
 double int_gausslag = 0.0;
-for (int i=0;i<N;i++){
+for (int i=1;i<=N;i++){
     cout << i << endl;
-    for (int j = 0; j<N; j++){
-    for (int k = 0; k<pi; k++){
-    for (int l = 0; l<pi; l++){
-    for (int m = 0; m< 2*pi; m++){
-    for (int n = 0; n < 2*pi; n++){
+    for (int j = 1; j<=N; j++){
+    for (int k = 1; k<=N; k++){
+    for (int l = 1; l<=N; l++){
+    for (int m = 1; m<=N; m++){
+    for (int n = 1; n<=N; n++){
 
     int_gausslag += wgl[i]*wgl[k]*wgl[m]*wgl[j]*wgl[l]*wgl[n]
-            *func_spherical(xgl[i],xgl[k],xgl[m],xgl[j],xgl[l],xgl[n]);
+            *func_spherical(i,_theta(k),_phi(m),j,_theta(l),_phi(n));
 
 //cout<< int_gausslag<<endl;
 }}}}}}
