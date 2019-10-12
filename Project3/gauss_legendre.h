@@ -41,6 +41,7 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
 
     double alpha = 2.0;
     double tol = 1E-10; //Tolerance: |r1-r2|=0 can cause problems, so have to check.
+    double cos_b
     double deno = sqrt(pow((x1-x2),2)+pow((y1-y2),2)+pow((z1-z2),2));
 
     //We make an if test, because we have to account for when deno goes towards zero,
