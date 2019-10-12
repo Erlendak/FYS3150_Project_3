@@ -19,18 +19,16 @@ int N = 20;
 //   method
 // Gauss-Laguerre is old-fashioned translation of F77 --> C++
 // arrays start at 1 and end at n
-double *xgl = new double [N+1];
-double *wgl = new double [N+1];
+
         // These arrays are used for improved Gauss-Legendre, mapping of
         // x \in [-1,1] to x \in [0, infinity)
 
    //   set up the mesh points and weights
    //   set up the mesh points and weights and the power of x^alf
+double *xgl = new double [N+1];
+double *wgl = new double [N+1];
 double alf = 2.0;
 gauss_laguerre(xgl,wgl, N, alf);
-
-//   evaluate the integral with the Gauss-Laguerre method
-//   Note that we initialize the sum
 
 vec _theta = linspace(0,pi,N+1);
 vec _phi =linspace(0,2*pi,N+1);
