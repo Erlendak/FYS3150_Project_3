@@ -9,7 +9,6 @@
 
 using namespace std;
 
-
 double brute_force_MC(double *);
 //     Main function begins here
 
@@ -34,7 +33,9 @@ void brute(int n){
      sum_sigma = sum_sigma/((double) n );
      variance=sum_sigma-int_mc*int_mc;
 
-      cout <<  jacobidet*int_mc<< endl;
+     cout <<  jacobidet*int_mc<< endl;
+   cout <<  sum_sigma<< endl;
+        cout <<  jacobidet*int_mc<< endl;
       cout <<  sum_sigma<< endl;
      }
 }  // end of main program
