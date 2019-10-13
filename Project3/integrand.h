@@ -1,5 +1,5 @@
-#ifndef GAUSS_LEGENDRE_H
-#define GAUSS_LEGENDRE_H
+#ifndef INTEGRAND_H
+#define INTEGRAND_H
 
 #include <iostream>
 #include <cmath>
@@ -8,8 +8,8 @@
 #include <time.h>
 #include <stdlib.h>
 #include "armadillo"
+#include "lib.h"
 #include <iostream>
-#include <lib.h>
 #include <methods.h>
 
 using namespace arma;
@@ -133,4 +133,4 @@ void task3b(){
 
 
 
-#endif // GAUSS_LEGENDRE_H
+#endif // INTEGRAND_H

@@ -5,29 +5,28 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include "lib.h"
+#include <integrand.h>
+
 using namespace std;
 
 
 double brute_force_MC(double *);
 //     Main function begins here
 
-void brute(N){
+void brute(int n){
     {
-     int n;
      double x[6], y, fx;
      double int_mc = 0.;  double variance = 0.;
      double sum_sigma= 0. ; long idum=-1 ;
      double length = 5.; // we fix the max size of the box to L=5
      double jacobidet = pow((2*length),6);
-     int n = ...
 //   evaluate the integral with importance sampling
      for ( int i = 1;  i <= n; i++){
 //   x[] contains the random numbers for all dimensions
        for (int j = 0; j< 6; j++) {
            x[j]=-length+2*length*ran0(&idum);
        }
-       fx=brute_force_MC(x);
+       fx= func_cartesian(x[0],x[1],x[2],x[3],x[4],x[5]);
        int_mc += fx;
        sum_sigma += fx*fx;
      }
@@ -36,11 +35,12 @@ void brute(N){
      variance=sum_sigma-int_mc*int_mc;
 
       cout <<  jacobidet*int_mc<< endl;
-      cout <<  volume*sqrt(variance/((double) n )) << endl;
+      cout <<  sum_sigma<< endl;
      }
 }  // end of main program
 
 // this function defines the integrand to integrate
+
 
 double  brute_force_MC(double *x)
 {
@@ -50,5 +50,6 @@ double  brute_force_MC(double *x)
    double xy=pow((x[0]-x[3]),2)+pow((x[1]-x[4]),2)+pow((x[2]-x[5]),2);
    return exp(-xx-yy)*xy;
 } // end function for the integrand
+
 #endif // MONTE_CARLO_H
 

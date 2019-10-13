@@ -1,6 +1,5 @@
-#ifndef GAUSS_LAG_H
-#define GAUSS_LAG_H
-
+#ifndef METHODS_H
+#define METHODS_H
 
 #include <cmath>
 #include <iostream>
@@ -8,6 +7,7 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <stdio.h>
+
 #define EPS 3.0e-14
 #define MAXIT 10
 using namespace std;
@@ -76,4 +76,4 @@ void gauss_laguerre(double *x, double *w, int n, double alf)
 
 
 
-#endif // GAUSS_LAG_H
+#endif // METHODS_H
