@@ -8,19 +8,19 @@
 #include "lib.h"
 using namespace std;
 
-/*
+
 double brute_force_MC(double *);
 //     Main function begins here
-int main()
-{
+
+void brute(N){
+    {
      int n;
      double x[6], y, fx;
      double int_mc = 0.;  double variance = 0.;
      double sum_sigma= 0. ; long idum=-1 ;
      double length = 5.; // we fix the max size of the box to L=5
      double jacobidet = pow((2*length),6);
-     cout << "Read in the number of Monte-Carlo samples" << endl;
-     cin >> n;
+     int n = ...
 //   evaluate the integral with importance sampling
      for ( int i = 1;  i <= n; i++){
 //   x[] contains the random numbers for all dimensions
@@ -34,11 +34,10 @@ int main()
      int_mc = int_mc/((double) n );
      sum_sigma = sum_sigma/((double) n );
      variance=sum_sigma-int_mc*int_mc;
-//   final output
-      cout << setiosflags(ios::showpoint | ios::uppercase);
-      cout << " Monte carlo result= " << setw(10) << setprecision(8) << jacobidet*int_mc;
-      cout << " Sigma= " << setw(10) << setprecision(8) << volume*sqrt(variance/((double) n )) << endl;
-     return 0;
+
+      cout <<  jacobidet*int_mc<< endl;
+      cout <<  volume*sqrt(variance/((double) n )) << endl;
+     }
 }  // end of main program
 
 // this function defines the integrand to integrate
@@ -52,4 +51,4 @@ double  brute_force_MC(double *x)
    return exp(-xx-yy)*xy;
 } // end function for the integrand
 #endif // MONTE_CARLO_H
-*/
+
