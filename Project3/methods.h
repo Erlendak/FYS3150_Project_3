@@ -74,25 +74,6 @@ void gauss_laguerre(double *x, double *w, int n, double alf)
 
 
 
-double func_spherical(double r1,double theta1, double phi1, double r2, double theta2, double phi2){
-
-    double alpha = 2.0;
-    double tol = 1E-10; //Tolerance: |r1-r2|=0 can cause problems, so have to check.
-
-    //We make an if test, because we have to account for when deno goes towards zero,
-    //if we don't, our expression will go against infinity.
-    double beta = cos(theta1)*cos(theta2)+sin(theta1)*sin(theta2)*cos(phi1-phi2);
-    double deno = sqrt((r1*r1) + (r2*r2) - 2*r1*r2*beta);
-    if(deno < tol){
-        return 0;
-    }
-    else{
-    double exp1 = -2*alpha*sqrt(r1);
-    double exp2 = -2*alpha*sqrt(r2);
-    return (sin(theta1)*sin(theta2)*(r1*r1)*(r2*r2)*exp(exp1+exp2))/deno;
-    }
-}
-
 
 
 #endif // GAUSS_LAG_H

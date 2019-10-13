@@ -1,40 +1,55 @@
 #ifndef MONTE_CARLO_H
 #define MONTE_CARLO_H
-#include <gauss_legendre.h>
-#include <gauss_lag.h>
-double func(double x);
+#include <integrand.h>
+#include <methods.h>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include "lib.h"
+using namespace std;
 
+/*
+double brute_force_MC(double *);
 //     Main function begins here
-int motecarlo(int N)
+int main()
 {
-     double MCint, MCintsqr2, fx, Variance;
-     MCint = MCintsqr2=0.;
-     double invers_period = 1./RAND_MAX; // initialise the random number generator
-     srand(time(NULL));  // This produces the so-called seed in MC jargon
-//   evaluate the integral with the a crude Monte-Carlo method
-     for ( int i = 1;  i <= N; i++){
-             for (int j = 1; j<=N; j++){//Radius 2
-                for (int k = 0; k<N; k++){//Theta 1
-                     for (int l = 0; l<N; l++){// Theta 2
-                           for (int m = 0; m<N; m++){// Phi 1
-                                for (int n = 0; n<N; n++){// Phi 2
-  // obtain a floating number x in [0,1]
-           double x = double(rand())*invers_period;
-           fx = func(x);
-           MCint += fx;
-           MCintsqr2 += fx*fx;
+     int n;
+     double x[6], y, fx;
+     double int_mc = 0.;  double variance = 0.;
+     double sum_sigma= 0. ; long idum=-1 ;
+     double length = 5.; // we fix the max size of the box to L=5
+     double jacobidet = pow((2*length),6);
+     cout << "Read in the number of Monte-Carlo samples" << endl;
+     cin >> n;
+//   evaluate the integral with importance sampling
+     for ( int i = 1;  i <= n; i++){
+//   x[] contains the random numbers for all dimensions
+       for (int j = 0; j< 6; j++) {
+           x[j]=-length+2*length*ran0(&idum);
+       }
+       fx=brute_force_MC(x);
+       int_mc += fx;
+       sum_sigma += fx*fx;
      }
-     MCint = MCint/((double) N );
-     MCintsqr2 = MCintsqr2/((double) N );
-     double variance=MCintsqr2-MCint*MCint;
+     int_mc = int_mc/((double) n );
+     sum_sigma = sum_sigma/((double) n );
+     variance=sum_sigma-int_mc*int_mc;
 //   final output
-     cout << " variance= " << variance << " Integral = " << MCint << " Exact= " << M_PI << endl;
+      cout << setiosflags(ios::showpoint | ios::uppercase);
+      cout << " Monte carlo result= " << setw(10) << setprecision(8) << jacobidet*int_mc;
+      cout << " Sigma= " << setw(10) << setprecision(8) << volume*sqrt(variance/((double) n )) << endl;
+     return 0;
 }  // end of main program
-// this function defines the function to integrate
-double func(double x)
+
+// this function defines the integrand to integrate
+
+double  brute_force_MC(double *x)
 {
-  double value;
-  value = 4/(1.+x*x);
-  return value;
-}
+// evaluate the different terms of the exponential
+   double xx=x[0]*x[0]+x[1]*x[1]+x[2]*x[2];
+   double yy=x[3]*x[3]+x[4]*x[4]+x[5]*x[5];
+   double xy=pow((x[0]-x[3]),2)+pow((x[1]-x[4]),2)+pow((x[2]-x[5]),2);
+   return exp(-xx-yy)*xy;
+} // end function for the integrand
 #endif // MONTE_CARLO_H
+*/
