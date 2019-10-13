@@ -1,11 +1,11 @@
 #ifndef MONTE_CARLO_H
 #define MONTE_CARLO_H
+
+#include <iostream>
 #include <integrand.h>
 #include <methods.h>
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <integrand.h>
+#include <cmath>
+#include <armadillo>
 
 using namespace std;
 
@@ -14,12 +14,19 @@ double brute_force_MC(double *);
 //     Main function begins here
 
 void brute(int n){
-    {
+
+     double a = 0;
+     double b = 3;
+     double jacobidet = 1;
+     for ( int i = 0;  i < 6; i++){
+         jacobidet = jacobidet * (b- a) ;
+     }
+
      double x[6], y, fx;
-     double int_mc = 0.;  double variance = 0.;
+     double int_mc = 1.;  double variance = 0.;
      double sum_sigma= 0. ; long idum=-1 ;
      double length = 5.; // we fix the max size of the box to L=5
-     double jacobidet = pow((2*length),6);
+
 //   evaluate the integral with importance sampling
      for ( int i = 1;  i <= n; i++){
 //   x[] contains the random numbers for all dimensions
@@ -34,10 +41,11 @@ void brute(int n){
      sum_sigma = sum_sigma/((double) n );
      variance=sum_sigma-int_mc*int_mc;
 
+
       cout <<  jacobidet*int_mc<< endl;
       cout <<  sum_sigma<< endl;
      }
-}  // end of main program
+  // end of main program
 
 // this function defines the integrand to integrate
 
