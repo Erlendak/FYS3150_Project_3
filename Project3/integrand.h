@@ -34,23 +34,24 @@ double func_cartesian(double x1,double y1, double z1, double x2, double y2, doub
         return exp(exp1+exp2)/deno;
     }
 }
-
+double func_polar_lag(double r1, double t1, double p1, double r2, double t2, double p2){
+        double cosb = cos(t1)*cos(t2) + sin(t1)*sin(t2)*cos(p1-p2);
+        double f = exp(-3*(r1+r2))*r1*r1*r2*r2*sin(t1)*sin(t2)/sqrt(r1*r1+r2*r2-2*r1*r2*cosb);
+        if(r1*r1+r2*r2-2*r1*r2*cosb > ZERO)
+                return f;
+        else
+                return 0;
+}
 double func_spherical(double r1,double theta1, double phi1, double r2, double theta2, double phi2){
-    double alpha = 2.0;
-    double tol = 1E-10; //Tolerance: Too small denominator can cause problems, so have to check
-
-    //We make an if test, because we have to account for when deno goes towards zero,
+    double alpha = 2;
+        //We make an if test, because we have to account for when deno goes towards zero,
     //if we don't, our expression will go against infinity.
-    double beta = cos(theta1)*cos(theta2)+sin(theta1)*sin(theta2)*cos(phi1-phi2);
-    double deno = sqrt(abs(pow(r1,2) + pow(r2,2) - (2*r1*r2*beta)));
-    if(deno < tol){
-        return 0;
-    }
-    else{
-    double exp1 = -2*alpha*r1;
-    double exp2 = -2*alpha*r2;
-    return (sin(theta1)*sin(theta2)*pow(r1,2)*pow(r2,2)*exp(exp1+exp2))/deno;
-    }
+    double cos_b = cos(theta1)*cos(theta2)+sin(theta1)*sin(theta2)*cos(phi1-phi2);
+    double deno = sqrt(r1*r1 + r2*r2 - (2*r1*r2*cos_b));
+    if(r1*r1+r2*r2-2*r1*r2*cos_b > ZERO)
+            return ((sin(theta1)*sin(theta2)*r1*r1*r2*r2*exp( -3 *(r1+r2) ))/deno);
+    else
+            return 0;
 }
 
 void task3a() {
@@ -81,8 +82,7 @@ void task3a() {
 
 void task3b(){
     double pi = 3.14159265;
-    int N = 20;
-    //double dpi = pi/N;
+
     //   reserve space in memory for vectors containing the mesh points
     //   weights and function values for the use of the gauss-legendre
     //   method
@@ -94,7 +94,7 @@ void task3b(){
 
        //   set up the mesh points and weights
        //   set up the mesh points and weights and the power of x^alf
-
+    int N = 20;
     double *x1 = new double [N];//Meshgrid for theta
     double *w1 = new double [N];// vekttall for theta
     double *x2 = new double [N];//Meshgrid for phi
@@ -105,7 +105,7 @@ void task3b(){
     gauleg(a,2*b,x2,w2, N); // For phi
     double *xgl = new double [N+1]; // radiusens meshgrid
     double *wgl = new double [N+1]; // radiusen vekttall
-    double alf = 2.0;
+    double alf = 0;
     gauss_laguerre(xgl,wgl, N, alf);//For radiusen
 
     //vec _theta = linspace(0,pi,N+1);
@@ -123,12 +123,11 @@ void task3b(){
 
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
                 * func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
-
-    //cout<< int_gausslag<<endl;
-    }}}}}}
+}}}}}}
     delete []xgl;
     delete []wgl;
     cout<< int_gausslag<<endl;
+    cout <<a <<endl;
 }
 
 

@@ -15,8 +15,8 @@ double brute_force_MC(double *);
 
 void brute(int n){
 
-     double a = 0; // Kunne brukt indekser for forskjellige grense verdier.
-     double b = 3;
+     double a = -5; // Kunne brukt indekser for forskjellige grense verdier.
+     double b = 5;
      double jacobidet = 1;
      for ( int i = 0;  i < 6; i++){
          jacobidet = jacobidet * (b- a) ; // \prod_{i=0}^{8} b_i - a_i
