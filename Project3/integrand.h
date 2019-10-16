@@ -43,13 +43,12 @@ double func_polar_lag(double r1, double t1, double p1, double r2, double t2, dou
                 return 0;
 }
 double func_spherical(double r1,double theta1, double phi1, double r2, double theta2, double phi2){
-    double alpha = 2;
         //We make an if test, because we have to account for when deno goes towards zero,
     //if we don't, our expression will go against infinity.
     double cos_b = cos(theta1)*cos(theta2)+sin(theta1)*sin(theta2)*cos(phi1-phi2);
     double deno = sqrt(r1*r1 + r2*r2 - (2*r1*r2*cos_b));
     if(r1*r1+r2*r2-2*r1*r2*cos_b > ZERO)
-            return ((sin(theta1)*sin(theta2)*r1*r1*r2*r2*exp( -3 *(r1+r2) ))/deno);
+            return ((sin(theta1)*sin(theta2)*exp(-3*(r1+r2))/deno));
     else
             return 0;
 }
@@ -94,40 +93,47 @@ void task3b(){
 
        //   set up the mesh points and weights
        //   set up the mesh points and weights and the power of x^alf
-    int N = 20;
-    double *x1 = new double [N];//Meshgrid for theta
-    double *w1 = new double [N];// vekttall for theta
-    double *x2 = new double [N];//Meshgrid for phi
-    double *w2 = new double [N];//vekttall for phi
+    int n_lag = 25;
+    int n_leg = 25;
+    double *x1 = new double [n_lag];//Meshgrid for theta
+    double *w1 = new double [n_lag];// vekttall for theta
+    double *x2 = new double [n_leg];//Meshgrid for phi
+    double *w2 = new double [n_leg];//vekttall for phi
     int a = 0;
     double b = pi;
-    gauleg(a,b,x1,w1, N);// For theta
-    gauleg(a,2*b,x2,w2, N); // For phi
-    double *xgl = new double [N+1]; // radiusens meshgrid
-    double *wgl = new double [N+1]; // radiusen vekttall
+    gauleg(a,b,x1,w1, n_leg);// For theta
+    gauleg(a,2*b,x2,w2, n_leg); // For phi
+
+    double *xgl = new double [n_lag+1]; // radiusens meshgrid
+    double *wgl = new double [n_lag+1]; // radiusen vekttall
     double alf = 0;
-    gauss_laguerre(xgl,wgl, N, alf);//For radiusen
+    gauss_laguerre(xgl,wgl, n_lag, alf);//For radiusen
 
-    //vec _theta = linspace(0,pi,N+1);
-    //vec _phi =linspace(0,2*pi,N+1);
     double int_gausslag = 0.0;
-    for (int i=1;i<=N;i++){ //Radius 1
+    for (int i=1;i<=n_lag;i++){ //Radius 1
         cout << i << endl;
-        for (int j = 1; j<=N; j++){//Radius 2
+        for (int j = 1; j<=n_lag; j++){//Radius 2
 
-        for (int k = 0; k<N; k++){//Theta 1
-        for (int l = 0; l<N; l++){// Theta 2
+        for (int k = 0; k<n_leg; k++){//Theta 1
+        for (int l = 0; l<n_leg; l++){// Theta 2
 
-        for (int m = 0; m<N; m++){// Phi 1
-        for (int n = 0; n<N; n++){// Phi 2
+        for (int m = 0; m<n_leg; m++){// Phi 1
+        for (int n = 0; n<n_leg; n++){// Phi 2
 
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
-                * func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                * func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                    //func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                    //func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
 }}}}}}
+
+    cout<< int_gausslag<<endl;
     delete []xgl;
     delete []wgl;
-    cout<< int_gausslag<<endl;
-    cout <<a <<endl;
+    delete []x1;
+    delete []w1;
+    delete []x2;
+    delete []w2;
+
 }
 
 
