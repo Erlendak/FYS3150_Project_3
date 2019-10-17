@@ -22,16 +22,20 @@ double func_cartesian(double x1,double y1, double z1, double x2, double y2, doub
 
     double alpha = 2.0;
     double tol = 1E-10; //Tolerance: |r1-r2|=0 can cause problems, so have to check.
-    double deno = sqrt(pow((x1-x2),2)+pow((y1-y2),2)+pow((z1-z2),2));
+    double deno = (pow((x1-x2),2)+pow((y1-y2),2)+pow((z1-z2),2));
 
     //We make an if test, because we have to account for when deno goes towards zero,
     //if we don't, our expression will go against infinity.
+    //cout <<  x1 << " " <<  x2 << " "<<  y1 << " "<<  y2 << " "<<  z1 << " "<<  z2 << endl;
+    //cout << deno << endl;
     if(deno < tol){
         return 0;
     }else{
         double exp1 = -2*alpha*sqrt((x1*x1)+(y1*y1)+(z1*z1));
         double exp2 = -2*alpha*sqrt((x2*x2)+(y2*y2)+(z2*z2));
-        return exp(exp1+exp2)/deno;
+
+        return exp(exp1+exp2)/sqrt(double(deno));
+
     }
 }
 double func_polar_lag(double r1, double t1, double p1, double r2, double t2, double p2){
@@ -42,6 +46,8 @@ double func_polar_lag(double r1, double t1, double p1, double r2, double t2, dou
         else
                 return 0;
 }
+
+
 double func_spherical(double r1,double theta1, double phi1, double r2, double theta2, double phi2){
         //We make an if test, because we have to account for when deno goes towards zero,
     //if we don't, our expression will go against infinity.
@@ -49,6 +55,14 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
     double deno = sqrt(r1*r1 + r2*r2 - (2*r1*r2*cos_b));
     if(r1*r1+r2*r2-2*r1*r2*cos_b > ZERO)
             return ((sin(theta1)*sin(theta2)*exp(-3*(r1+r2))/deno));
+    else
+            return 0;
+}
+double func_spherical_monte_carlo(double r1, double t1, double p1, double r2, double t2, double p2){
+    double cosb = cos(t1)*cos(t2) + sin(t1)*sin(t2)*cos(p1-p2);
+    double f = r1*r1*r2*r2*sin(t1)*sin(t2)/sqrt(r1*r1+r2*r2-2*r1*r2*cosb);
+    if(r1*r1+r2*r2-2*r1*r2*cosb > ZERO)
+            return f;
     else
             return 0;
 }
@@ -110,6 +124,7 @@ void task3b(){
     gauss_laguerre(xgl,wgl, n_lag, alf);//For radiusen
 
     double int_gausslag = 0.0;
+   // cout<< xgl[1]<<endl;
     for (int i=1;i<=n_lag;i++){ //Radius 1
         cout << i << endl;
         for (int j = 1; j<=n_lag; j++){//Radius 2
@@ -119,7 +134,8 @@ void task3b(){
 
         for (int m = 0; m<n_leg; m++){// Phi 1
         for (int n = 0; n<n_leg; n++){// Phi 2
-
+        //cout<<wgl[i] <<" "<<wgl[j]<<"" "" <<w1[k] <<" "<<w2[m]<< "" "" << w1[l] <<" "<<w2[n]<<"" ""<<" "xgl[]<<
+          // xgl[i] <<" "<<xgl[j]<<"" "" <<x1[k] <<" "<<x2[m]<< "" "" << x1[l] <<" "<<x2[n] <<endl;
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
                 * func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
                     //func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
