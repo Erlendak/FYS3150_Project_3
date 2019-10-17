@@ -14,7 +14,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         random_device ran;
         mt19937_64 gen(ran());
 
-        uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
+        uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0); // (a,b)
         double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
         double mc = 0.0;
@@ -25,7 +25,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
 
         #pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
         for (i = 0; i < n; i++){
-                x1 = RandomNumberGenerator(gen)*(b-a) + a;
+                x1 = RandomNumberGenerator(gen)*(b-a) + a; //RandomNumberGenerator(gen)
                 x2 = RandomNumberGenerator(gen)*(b-a) +a;
                 y1 = RandomNumberGenerator(gen)*(b-a) +a;
                 y2 = RandomNumberGenerator(gen)*(b-a) +a;
@@ -64,7 +64,7 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
         double jacob = pow((b-a),6);
 
 
-        #pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
+        //#pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
         for (i = 0; i < n; i++){
                 x1 = RandomNumberGenerator(gen)*(b-a) + a;
                 x2 = RandomNumberGenerator(gen)*(b-a) +a;
@@ -79,7 +79,7 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
                 x[i] = f;
         }
         mc = mc/( (double) n );
-        #pragma omp parallel for reduction(+:sigma)  private (i)
+        //#pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
@@ -93,35 +93,36 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
 
 
 void Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
+        double pi = 3.14159265;
         random_device ran;
         mt19937_64 gen(ran());
-        uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
-        double pi = 3.14159265;
+        exponential_distribution<double> Exponential_R(-3);
+        uniform_real_distribution<double> UniformTheta(0,pi);
+        uniform_real_distribution<double> UniformPhi(0,2*pi);
         double * x = new double [n];
         double r1, r2, t1, t2, p1, p2, f;
         double mc = 0.0;
-        double variance = 0.0 ;
-        long idum = - 1;
+
         double sigma = 0.0;
-        int i;
+
         double jacob = 4*pi*pi*pi*pi /16;
 
-
-        #pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
+        int i;
+        //#pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
         for (i = 0; i < n; i++){
-                r1 = //guass_deviant(idum)*((b-a) + a); //*RandomNumberGenerator(gen);
-                r2 = RandomNumberGenerator(gen)*(b-a) +a;
-                t1 = RandomNumberGenerator(gen)*(b-a) +a;
-                t2 = RandomNumberGenerator(gen)*(b-a) +a;
-                p1 = RandomNumberGenerator(gen)*(b-a) +a;
-                p2 = RandomNumberGenerator(gen)*(b-a) +a;
+                r1 = Exponential_R(gen);
+                r2 = Exponential_R(gen);
+                t1 = UniformTheta(gen);
+                t2 = UniformTheta(gen);
+                p1 = UniformPhi(gen);
+                p2 = UniformPhi(gen);
 
                 f = func_spherical_monte_carlo(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
         }
         mc = mc/( (double) n );
-        #pragma omp parallel for reduction(+:sigma)  private (i)
+        //#pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
@@ -132,6 +133,6 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
         cout<< integral<<endl;
         delete [] x;
 }
-*/
+
 #endif // MONTE_CARLO_H
 

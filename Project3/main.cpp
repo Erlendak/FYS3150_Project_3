@@ -15,7 +15,7 @@ using namespace arma;
     //task3b();
     double integralening ;
     double _std;
-    Brute_MonteCarlo(100000, -3,3, integralening,_std);
+    Importance_MonteCarlo(10000000, -3,3, integralening,_std);
     cout <<integralening <<endl;
     return 0;
     }
