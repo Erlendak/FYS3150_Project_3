@@ -7,11 +7,13 @@ double func(double x1){
     return x1*x1;
 }
 
-
 void test_leg(){
-    /*test_leg:
-    *Unit test for gaussleg. Set*/
-    int N = 26;
+    /*test_leg():
+    *Unit test for gaussleg. We have found an
+    analytical solution to the integral and compare our method in
+    one dimention tot he analytical answer.*/
+
+    int N = 27;
     int a = -3;
     int b = 3;
     int tol  = 1E-8;
