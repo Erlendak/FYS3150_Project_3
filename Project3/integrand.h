@@ -53,7 +53,7 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
     }
 }
 
-void task3a() {
+double task3a() {
     int N = 27;
     int a = -3;
     int b = 3;
@@ -74,9 +74,10 @@ void task3a() {
        gauss+=w[i]*w[j]*w[k]*w[l]*w[m]*w[n]*func_cartesian(x[i],x[j],x[k],x[l],x[m],x[n]);
            }}}}}
     }
-    cout << gauss<< endl;
+
     delete [] x;
     delete [] w;
+    return gauss;
 }
 
 void task3b(){
@@ -99,10 +100,9 @@ void task3b(){
     double *w1 = new double [N];// vekttall for theta
     double *x2 = new double [N];//Meshgrid for phi
     double *w2 = new double [N];//vekttall for phi
-    int a = 0;
-    double b = pi;
-    gauleg(a,b,x1,w1, N);// For theta
-    gauleg(a,2*b,x2,w2, N); // For phi
+
+    gauleg(0,M_PI,x1,w1, N);// For theta
+    gauleg(0,2*M_PI,x2,w2, N); // For phi
     double *xgl = new double [N+1]; // radiusens meshgrid
     double *wgl = new double [N+1]; // radiusen vekttall
     double alf = 2.0;
