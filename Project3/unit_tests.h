@@ -36,10 +36,11 @@ void test_leg(){
 };
 
 void test_ans(){
-    int tol = 1E-6;
+    int tol = 1E-2;
+    cout << task3a() << endl;
     try{
         if (abs(0.192765-task3a()) > tol){
-        throw "Warning: Bot even close to the analytical value";
+        throw "Warning: Not even close to the analytical value";
     }
     }
         catch (const char* msg){
