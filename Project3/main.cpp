@@ -10,12 +10,12 @@ using namespace std;
 using namespace arma;
 
     int main(){
-
+    //cout << func_polar_lag(-1,2,1, 0.5,2 ,-1)<<endl:
     //task3a();
-    task3b();
-    //double integralening ;
-    //double _std;
-    //Brute_MonteCarlo(100000, -3,3, integralening,_std);
-    //cout <<integralening <<endl;
+    //task3b();
+    double integralening ;
+    double _std;
+    Brute_MonteCarlo(100000, -3,3, integralening,_std);
+    cout <<integralening <<endl;
     return 0;
     }
