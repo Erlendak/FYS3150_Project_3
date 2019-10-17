@@ -96,7 +96,7 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
         double pi = 3.14159265;
         random_device ran;
         mt19937_64 gen(ran());
-        exponential_distribution<double> Exponential_R(-3);
+        exponential_distribution<double> Exponential_R(-4);
         uniform_real_distribution<double> UniformTheta(0,pi);
         uniform_real_distribution<double> UniformPhi(0,2*pi);
         double * x = new double [n];
