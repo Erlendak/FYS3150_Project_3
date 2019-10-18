@@ -52,45 +52,6 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
 } // end function for the integrand
 
 
-void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
-        random_device ran;
-        mt19937_64 gen(ran());
-
-        uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
-        double * x = new double [n];
-        double x1, x2, y1, y2, z1, z2, f;
-        double mc = 0.0;
-        double sigma = 0.0;
-        int i;
-        double jacob = pow((b-a),6);
-
-
-        //#pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
-        for (i = 0; i < n; i++){
-                x1 = RandomNumberGenerator(gen)*(b-a) + a;
-                x2 = RandomNumberGenerator(gen)*(b-a) +a;
-                y1 = RandomNumberGenerator(gen)*(b-a) +a;
-                y2 = RandomNumberGenerator(gen)*(b-a) +a;
-                z1 = RandomNumberGenerator(gen)*(b-a) +a;
-                z2 = RandomNumberGenerator(gen)*(b-a) +a;
-                //cout <<  x1 << " " <<  x2 << " "<<  y1 << " "<<  y2 << " "<<  z1 << " "<<  z2 << endl;
-                f = func_cartesian(x1, y1, z1, x2, y2, z2);
-                mc += f;
-                //cout << f << endl;
-                x[i] = f;
-        }
-        mc = mc/( (double) n );
-        //#pragma omp parallel for reduction(+:sigma)  private (i)
-        for (i = 0; i < n; i++){
-                sigma += (x[i] - mc)*(x[i] - mc);
-        }
-        double _n = n;
-        sigma = sigma*jacob/((double)_n );
-        std = sqrt(sigma)/sqrt((double)_n);
-        integral = mc*jacob;
-        cout<< integral<<endl;
-        delete [] x;
-}
 
 
 void Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
@@ -134,9 +95,9 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
-        double _n = n;
-        sigma = sigma*jacob/((double)_n );
-        std = sqrt(sigma)/sqrt((double)_n);
+        //double _n = n;
+        sigma = sigma*jacob/((double)n );
+        std = sqrt(sigma)/sqrt((double)n);
         integral = mc*jacob;
         cout<< integral<<endl;
         delete [] x;

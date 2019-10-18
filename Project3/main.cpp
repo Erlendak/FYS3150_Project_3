@@ -17,7 +17,7 @@ using namespace arma;
     //test_ans();
     double integralening ;
     double _std;
-    Importance_MonteCarlo(1000000, -2,2, integralening,_std);
+    Importance_MonteCarlo(10000000, -2,2, integralening,_std);
     cout <<integralening <<endl;
     return 0;
     }
