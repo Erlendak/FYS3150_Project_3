@@ -15,7 +15,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         random_device ran;
         mt19937_64 gen(ran());
 
-
+        clock_t start, finish;
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0); // (a,b)
         double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
@@ -24,7 +24,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         int i;
         double jacob = pow((b-a),6);
 
-
+        start = clock();
         //#pragma omp parallel for reduction(+:mc)  private (i)
         for (i = 0; i < n; i++){
                 x1 = RandomNumberGenerator(gen)*(b-a) + a; //RandomNumberGenerator(gen)
@@ -44,6 +44,8 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
+        finish = clock();
+        cout << "Algorithm time:" <<((((double)finish - (double)start)/CLOCKS_PER_SEC)) << "s"<<endl;
         double _n = n;
         sigma = sigma*jacob/((double)_n );
         std = sqrt(sigma)/sqrt((double)_n);
@@ -69,13 +71,13 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
 
         double sigma = 0.0;
 
-        double jacob = 4*pi*pi*pi*pi /16;
+        double jacob = 4*pi*pi*pi*pi/16;
 
 
         int i;
+        start = clock();
         //omp_set_num_threads(2);
         //#pragma omp parallel for reduction(+:mc)  private (i)
-        start = clock();
         for (i = 0; i < n; i++){
                 r1 = Exponential_R(gen);
                 r2 = Exponential_R(gen);

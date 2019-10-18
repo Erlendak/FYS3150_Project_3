@@ -105,13 +105,14 @@ double task3a(){
     double *x = new double [N];
     double *w = new double [N];
 
+
     //Function from lib, sets up mesh grid and weights.
     gauleg(a,b,x,w, N);
 
     //Gauss-Legendre method for a six dimensional
     //function.
-
     double gauss = 0.0;
+    start = clock();
     for (int i=0;i<N;i++){
         cout << i << endl;
         for (int j = 0;j<N;j++){
@@ -157,9 +158,9 @@ void task3b(){
     double *xgl = new double [n_lag+1]; // Radius meshgrid
     double *wgl = new double [n_lag+1]; // Radius vekttall
 
+
     double alf = 0;
     gauss_laguerre(xgl,wgl, n_lag, alf);//For radiusen
-
 
     start = clock();
     double int_gausslag = 0.0;
@@ -177,7 +178,6 @@ void task3b(){
           // xgl[i] <<" "<<xgl[j]<<"" "" <<x1[k] <<" "<<x2[m]<< "" "" << x1[l] <<" "<<x2[n] <<endl;
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
                 * func_polar(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
-                    //func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
                     //func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
 }}}}}}
     finish = clock();
