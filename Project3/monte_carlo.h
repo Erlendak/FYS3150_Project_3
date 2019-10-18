@@ -56,7 +56,7 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
         mt19937_64 gen(ran());
 
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
-        double * x = new double [n];
+        double *x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
         double mc = 0.0;
         double sigma = 0.0;
@@ -93,6 +93,13 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
 
 
 void Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
+        /* Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std)
+         *Function where we have improved our Monte-Carlo method. Instead of using
+         *using uniform distribution for the radius we use exponential distribution
+         * on it, with this we also absorb the exponentials and can adjust the function we integrate.
+         * For phi and theta we still use uniform distribution. We've also had to adjust our jacobi
+         * determinant.
+          */
         double pi = 3.14159265;
         random_device ran;
         mt19937_64 gen(ran());
@@ -117,7 +124,7 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
                 p1 = UniformPhi(gen);
                 p2 = UniformPhi(gen);
 
-                f = func_spherical_monte_carlo(r1, t1, p1, r2, t2, p2);
+                f = func_polar_mc(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
         }
@@ -135,4 +142,3 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
 }
 
 #endif // MONTE_CARLO_H
-
