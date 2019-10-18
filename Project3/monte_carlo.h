@@ -15,6 +15,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         random_device ran;
         mt19937_64 gen(ran());
 
+
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0); // (a,b)
         double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
@@ -24,7 +25,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         double jacob = pow((b-a),6);
 
 
-        #pragma omp parallel for reduction(+:mc)  private (i)
+        //#pragma omp parallel for reduction(+:mc)  private (i)
         for (i = 0; i < n; i++){
                 x1 = RandomNumberGenerator(gen)*(b-a) + a; //RandomNumberGenerator(gen)
                 x2 = RandomNumberGenerator(gen)*(b-a) +a;
@@ -39,7 +40,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
                 x[i] = f;
         }
         mc = mc/( (double) n );
-        #pragma omp parallel for reduction(+:sigma)  private (i)
+        //#pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
@@ -94,6 +95,7 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
 
 
 void Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
+        clock_t start, finish;
         double pi = 3.14159265;
         random_device ran;
         mt19937_64 gen(ran());
@@ -111,7 +113,8 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
 
         int i;
         //omp_set_num_threads(2);
-        #pragma omp parallel for reduction(+:mc)  private (i)
+        //#pragma omp parallel for reduction(+:mc)  private (i)
+        start = clock();
         for (i = 0; i < n; i++){
                 r1 = Exponential_R(gen);
                 r2 = Exponential_R(gen);
@@ -123,17 +126,19 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
                 f = func_polar_mc(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
-                printf("Using %d threads\n",omp_get_num_threads());
+                //printf("Using %d threads\n",omp_get_num_threads());
         }
-        int nthreads = omp_get_num_threads();
-        printf("Using %d threads\n",nthreads);
-        int mthreads = omp_get_max_threads();
-        printf("There are %d threads available at a time\n",mthreads);
+        //int nthreads = omp_get_num_threads();
+        //printf("Using %d threads\n",nthreads);
+        //int mthreads = omp_get_max_threads();
+        //printf("There are %d threads available at a time\n",mthreads);
         mc = mc/( (double) n );
-        #pragma omp parallel for reduction(+:sigma)  private (i)
+        //#pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
+        finish = clock();
+        cout << "Algorithm time:" <<((((double)finish - (double)start)/CLOCKS_PER_SEC)) << "s"<<endl;
         double _n = n;
         sigma = sigma*jacob/((double)_n );
         std = sqrt(sigma)/sqrt((double)_n);
