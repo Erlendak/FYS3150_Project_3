@@ -1,22 +1,23 @@
+#include <iostream>
 #include <integrand.h>
 #include <methods.h>
 #include <cmath>
 #include <armadillo>
 #include <monte_carlo.h>
 #include <unit_tests.h>
+#include <omp.h> //The Open MPI package
 
 
 using namespace std;
 using namespace arma;
 
     int main(){
-    //cout << func_polar_lag(-1,2,1, 0.5,2 ,-1)<<endl:
     //task3a();
     //task3b();
-    test_ans();
+    //test_ans();
     double integralening ;
     double _std;
-    Importance_MonteCarlo(10000000, -3,3, integralening,_std);
+    Importance_MonteCarlo(1000000, -2,2, integralening,_std);
     cout <<integralening <<endl;
     return 0;
     }

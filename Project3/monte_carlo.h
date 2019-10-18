@@ -7,7 +7,8 @@
 #include <cmath>
 #include <armadillo>
 #include <random>
-
+#include <omp.h>
+#include <cstdio>
 using namespace std;
 
 void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
@@ -23,7 +24,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         double jacob = pow((b-a),6);
 
 
-        #pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
+        #pragma omp parallel for reduction(+:mc)  private (i)
         for (i = 0; i < n; i++){
                 x1 = RandomNumberGenerator(gen)*(b-a) + a; //RandomNumberGenerator(gen)
                 x2 = RandomNumberGenerator(gen)*(b-a) +a;
@@ -56,7 +57,7 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
         mt19937_64 gen(ran());
 
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0);
-        double *x = new double [n];
+        double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
         double mc = 0.0;
         double sigma = 0.0;
@@ -93,13 +94,6 @@ void _MonteCarlo(int n, double a, double b, double  &integral, double  &std){
 
 
 void Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
-        /* Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std)
-         *Function where we have improved our Monte-Carlo method. Instead of using
-         *using uniform distribution for the radius we use exponential distribution
-         * on it, with this we also absorb the exponentials and can adjust the function we integrate.
-         * For phi and theta we still use uniform distribution. We've also had to adjust our jacobi
-         * determinant.
-          */
         double pi = 3.14159265;
         random_device ran;
         mt19937_64 gen(ran());
@@ -114,8 +108,10 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
 
         double jacob = 4*pi*pi*pi*pi /16;
 
+
         int i;
-        //#pragma omp parallel for reduction(+:mc)  private (i, x1, x2, y1, y2, z1, z2, f)
+        //omp_set_num_threads(2);
+        #pragma omp parallel for reduction(+:mc)  private (i)
         for (i = 0; i < n; i++){
                 r1 = Exponential_R(gen);
                 r2 = Exponential_R(gen);
@@ -127,9 +123,14 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
                 f = func_polar_mc(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
+                printf("Using %d threads\n",omp_get_num_threads());
         }
+        int nthreads = omp_get_num_threads();
+        printf("Using %d threads\n",nthreads);
+        int mthreads = omp_get_max_threads();
+        printf("There are %d threads available at a time\n",mthreads);
         mc = mc/( (double) n );
-        //#pragma omp parallel for reduction(+:sigma)  private (i)
+        #pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
@@ -142,3 +143,4 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
 }
 
 #endif // MONTE_CARLO_H
+
