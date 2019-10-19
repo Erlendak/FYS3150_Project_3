@@ -87,7 +87,7 @@ double func_polar_mc(double r1, double t1, double p1, double r2, double t2, doub
 }
 
 
-double task3a(){
+double task3a(int N, double &_t){
     /*task3a():
      * Function where we do the Gauss-Legendre, brute force way.
        We set up weights and grid and then use 6 loops, one for
@@ -95,16 +95,16 @@ double task3a(){
        so our interval is <-c,c>, where c is an integer. Legendre is defined
        between <-inf,inf>, but our c is an approximatio of infinity.*/
 
-    clock_t start, finish;
-    int N = 27;
+    //int N = 27;
     //Integration interval.
+    clock_t start, finish;
+    cout<<N<<endl;
     int a = -3;
     int b = 3;
 
     //Define weights and grid.
     double *x = new double [N];
     double *w = new double [N];
-
 
     //Function from lib, sets up mesh grid and weights.
     gauleg(a,b,x,w, N);
@@ -114,25 +114,22 @@ double task3a(){
     double gauss = 0.0;
     start = clock();
     for (int i=0;i<N;i++){
-        cout << i << endl;
         for (int j = 0;j<N;j++){
         for (int k = 0;k<N;k++){
         for (int l = 0;l<N;l++){
         for (int m = 0;m<N;m++){
         for (int n = 0;n<N;n++){
-            gauss+=w[i]*w[j]*w[k]*w[l]*w[m]*w[n]*func_cartesian(x[i],x[k],x[m],x[j],x[l],x[n]);
-                    //func_cartesian(x[i],x[j],x[k],x[l],x[m],x[n]);
+            gauss+=w[i]*w[j]*w[k]*w[l]*w[m]*w[n]*func_cartesian(x[i],x[j],x[k],x[l],x[m],x[n]);
        }}}}}
        }
     finish = clock();
-    cout << "Algorithm time:" <<((((double)finish - (double)start)/CLOCKS_PER_SEC)) << endl;
-    cout<< gauss<<endl;
+    _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
     delete [] x;
     delete [] w;
     return gauss;
 }
 
-void task3b(){
+double task3b(int N, double &_t){
     /*task3b():
      * Improved Gauss-Legendre/ Gauss-Laguerre.
        We set up weights and grid similar to how we did in task3a(),
@@ -140,11 +137,11 @@ void task3b(){
        We use Gauss-Legendre to find the weights and grid of phi and theta,
        and then we use Gauss-Laguerre to find the weights and grid of r.
        Gauss-Laguerre is defined from [0,inf).*/
-
+    cout<<N<<endl;
     clock_t start, finish;
     double pi = 3.14159265;
-    int n_lag = 27;
-    int n_leg = 27;
+    int n_lag = N;
+    int n_leg = N;
     double *x1 = new double [n_lag];//Meshgrid for theta
     double *w1 = new double [n_lag];// Weight for theta
     double *x2 = new double [n_leg];//Meshgrid for phi
@@ -158,15 +155,12 @@ void task3b(){
     double *xgl = new double [n_lag+1]; // Radius meshgrid
     double *wgl = new double [n_lag+1]; // Radius vekttall
 
-
     double alf = 0;
     gauss_laguerre(xgl,wgl, n_lag, alf);//For radiusen
 
-    start = clock();
     double int_gausslag = 0.0;
-   // cout<< xgl[1]<<endl;
+    start = clock();
     for (int i=1;i<=n_lag;i++){ //Radius 1
-        cout << i << endl;
         for (int j = 1; j<=n_lag; j++){//Radius 2
 
         for (int k = 0; k<n_leg; k++){//Theta 1
@@ -178,18 +172,18 @@ void task3b(){
           // xgl[i] <<" "<<xgl[j]<<"" "" <<x1[k] <<" "<<x2[m]<< "" "" << x1[l] <<" "<<x2[n] <<endl;
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
                 * func_polar(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                    //func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
                     //func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
 }}}}}}
     finish = clock();
-    cout << "Algorithm time:" <<((((double)finish - (double)start)/CLOCKS_PER_SEC)) << "s"<<endl;
-    cout<< int_gausslag<<endl;
+    _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
     delete []xgl;
     delete []wgl;
     delete []x1;
     delete []w1;
     delete []x2;
     delete []w2;
-
+    return(int_gausslag);
 }
 
 

@@ -11,11 +11,14 @@
 #include <cstdio>
 using namespace std;
 
-void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
+double Brute_MonteCarlo(int n, double  &_t, double  &std){
+        cout<< n <<endl;
+        clock_t start, finish;
+        double a = -2;
+        double b = 2;
         random_device ran;
         mt19937_64 gen(ran());
 
-        clock_t start, finish;
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0); // (a,b)
         double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
@@ -25,7 +28,7 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
         double jacob = pow((b-a),6);
 
         start = clock();
-        //#pragma omp parallel for reduction(+:mc)  private (i)
+        #pragma omp parallel for reduction(+:mc)  private (i)
         for (i = 0; i < n; i++){
                 x1 = RandomNumberGenerator(gen)*(b-a) + a; //RandomNumberGenerator(gen)
                 x2 = RandomNumberGenerator(gen)*(b-a) +a;
@@ -33,33 +36,32 @@ void Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std
                 y2 = RandomNumberGenerator(gen)*(b-a) +a;
                 z1 = RandomNumberGenerator(gen)*(b-a) +a;
                 z2 = RandomNumberGenerator(gen)*(b-a) +a;
-                //cout <<  x1 << " " <<  x2 << " "<<  y1 << " "<<  y2 << " "<<  z1 << " "<<  z2 << endl;
                 f = func_cartesian(x1, y1, z1, x2, y2, z2);
                 mc += f;
-                //cout << f << endl;
                 x[i] = f;
         }
+        finish = clock();
+        _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
         mc = mc/( (double) n );
         //#pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
-        finish = clock();
-        cout << "Algorithm time:" <<((((double)finish - (double)start)/CLOCKS_PER_SEC)) << "s"<<endl;
         double _n = n;
         sigma = sigma*jacob/((double)_n );
         std = sqrt(sigma)/sqrt((double)_n);
-        integral = mc*jacob;
-        cout<< integral<<endl;
+        double integral = mc*jacob;
         delete [] x;
+        return( integral);
 } // end function for the integrand
 
 
 
 
-void Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std){
-        clock_t start, finish;
+double Importance_MonteCarlo(int n, double  &_t, double & std, int full_spuud){
+        cout<< n <<endl;
         double pi = 3.14159265;
+        clock_t start, finish;
         random_device ran;
         mt19937_64 gen(ran());
         exponential_distribution<double> Exponential_R(-4);
@@ -71,13 +73,16 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
 
         double sigma = 0.0;
 
-        double jacob = 4*pi*pi*pi*pi/16;
+        double jacob = 4*pi*pi*pi*pi /16;
 
 
         int i;
         start = clock();
-        //omp_set_num_threads(2);
-        //#pragma omp parallel for reduction(+:mc)  private (i)
+        if(full_spuud){
+        #pragma omp parallel for reduction(+:mc)  private (i)
+        }else {
+            cout<<full_spuud<<endl;
+        }
         for (i = 0; i < n; i++){
                 r1 = Exponential_R(gen);
                 r2 = Exponential_R(gen);
@@ -91,23 +96,24 @@ void Importance_MonteCarlo(int n, double a, double b, double  &integral, double 
                 x[i] = f;
                 //printf("Using %d threads\n",omp_get_num_threads());
         }
-        //int nthreads = omp_get_num_threads();
-        //printf("Using %d threads\n",nthreads);
-        //int mthreads = omp_get_max_threads();
-        //printf("There are %d threads available at a time\n",mthreads);
+        finish = clock();
+        _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
+        int nthreads = omp_get_num_threads();
+        printf("Using %d threads\n",nthreads);
+        int mthreads = omp_get_max_threads();
+        printf("There are %d threads available at a time\n",mthreads);
         mc = mc/( (double) n );
-        //#pragma omp parallel for reduction(+:sigma)  private (i)
+        #pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
-        finish = clock();
-        cout << "Algorithm time:" <<((((double)finish - (double)start)/CLOCKS_PER_SEC)) << "s"<<endl;
-        double _n = n;
-        sigma = sigma*jacob/((double)_n );
-        std = sqrt(sigma)/sqrt((double)_n);
-        integral = mc*jacob;
-        cout<< integral<<endl;
+        //double _n = n;
+        sigma = sigma*jacob/((double)n );
+        std = sqrt(sigma)/sqrt((double)n);
+        double integral = mc*jacob;
         delete [] x;
+        return( integral);
 }
 
 #endif // MONTE_CARLO_H
+
