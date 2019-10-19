@@ -14,8 +14,8 @@ using namespace std;
 double Brute_MonteCarlo(int n, double  &_t, double  &std){
         cout<< n <<endl;
         clock_t start, finish;
-        double a = -2;
-        double b = 2;
+        double a = -3;
+        double b = 3;
         random_device ran;
         mt19937_64 gen(ran());
 
@@ -28,7 +28,7 @@ double Brute_MonteCarlo(int n, double  &_t, double  &std){
         double jacob = pow((b-a),6);
 
         start = clock();
-        #pragma omp parallel for reduction(+:mc)  private (i)
+        #pragma omp parallel for private (i, x1, x2, y1,y2, z1, z2, f)
         for (i = 0; i < n; i++){
                 x1 = RandomNumberGenerator(gen)*(b-a) + a; //RandomNumberGenerator(gen)
                 x2 = RandomNumberGenerator(gen)*(b-a) +a;
@@ -39,11 +39,12 @@ double Brute_MonteCarlo(int n, double  &_t, double  &std){
                 f = func_cartesian(x1, y1, z1, x2, y2, z2);
                 mc += f;
                 x[i] = f;
+                //printf("Using %d threads\n",omp_get_num_threads());
         }
         finish = clock();
         _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
         mc = mc/( (double) n );
-        //#pragma omp parallel for reduction(+:sigma)  private (i)
+        #pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
@@ -53,12 +54,11 @@ double Brute_MonteCarlo(int n, double  &_t, double  &std){
         double integral = mc*jacob;
         delete [] x;
         return( integral);
-} // end function for the integrand
+}
 
 
 
-
-double Importance_MonteCarlo(int n, double  &_t, double & std, int full_spuud){
+double Importance_MonteCarlo(int n, double  &_t, double & std){
         cout<< n <<endl;
         double pi = 3.14159265;
         clock_t start, finish;
@@ -78,11 +78,8 @@ double Importance_MonteCarlo(int n, double  &_t, double & std, int full_spuud){
 
         int i;
         start = clock();
-        if(full_spuud){
+
         #pragma omp parallel for reduction(+:mc)  private (i)
-        }else {
-            cout<<full_spuud<<endl;
-        }
         for (i = 0; i < n; i++){
                 r1 = Exponential_R(gen);
                 r2 = Exponential_R(gen);
@@ -94,20 +91,14 @@ double Importance_MonteCarlo(int n, double  &_t, double & std, int full_spuud){
                 f = func_polar_mc(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
-                //printf("Using %d threads\n",omp_get_num_threads());
         }
         finish = clock();
         _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
-        int nthreads = omp_get_num_threads();
-        printf("Using %d threads\n",nthreads);
-        int mthreads = omp_get_max_threads();
-        printf("There are %d threads available at a time\n",mthreads);
         mc = mc/( (double) n );
         #pragma omp parallel for reduction(+:sigma)  private (i)
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
-        //double _n = n;
         sigma = sigma*jacob/((double)n );
         std = sqrt(sigma)/sqrt((double)n);
         double integral = mc*jacob;

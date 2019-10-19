@@ -12,22 +12,16 @@ using namespace std;
 using namespace arma;
 
     int main(){
-        //int nthreads = omp_get_num_threads();
-        //printf("Using %d threads\n",nthreads);
-        //int mthreads = omp_get_max_threads();
-        //printf("There are %d threads available at a time\n",mthreads);
+        int nthreads = omp_get_num_threads();
+        printf("Using %d threads outside parallel loop\n",nthreads);
+        int mthreads = omp_get_max_threads();
+        printf("There are %d threads available at a time\n",mthreads);
         double std;
         int M = 9;
         double _t ;
 
-        int _N = 20;
-    //task3a();
-    //task3b();
-    //test_ans();
-    //double integralening ;
-    //double _std;
-    //Importance_MonteCarlo(10000000, -2,2, integralening,_std);
-    //cout <<integralening <<endl;
+        int _N = 25;
+
 /*
     ofstream afile;
     string afilename = "gauss_legendre.dat";
@@ -67,7 +61,7 @@ using namespace arma;
 
 
      cfile.close();
-
+/*
      ofstream dfile;
      string dfilename = "importance_sampling_monte_carlo.dat";
      dfile.open(dfilename);
