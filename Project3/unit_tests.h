@@ -8,8 +8,7 @@ double func(double x1){
 }
 
 double func_2(double r,double t, double p){
-    //sqrt(pow(x,2)+pow(y,2)+pow(z^2))
-    p;
+    return pow(r,3)*sin(t);
 }
 
 void test_leg(){
@@ -47,14 +46,14 @@ void test_lag(){
     /*task3b():
      * Improved Gauss-Legendre/ Gauss-Laguerre.
        We set up weights and grid similar to how we did in task3a(),
-       but because we're in polar coordinates so we have to make adjustments.
+       but because we're in spherical coordinates so we have to make adjustments.
        We use Gauss-Legendre to find the weights and grid of phi and theta,
        and then we use Gauss-Laguerre to find the weights and grid of r.
        Gauss-Laguerre is defined from [0,inf).*/
 
     double pi = 3.14159265;
-    int n_lag = 15;
-    int n_leg = 15;
+    int n_lag = 20;
+    int n_leg = 20;
     double *x1 = new double [n_lag];//Meshgrid for theta
     double *w1 = new double [n_lag];// Weight for theta
     double *x2 = new double [n_leg];//Meshgrid for phi
@@ -68,7 +67,6 @@ void test_lag(){
     double *xgl = new double [n_lag+1]; // Radius meshgrid
     double *wgl = new double [n_lag+1]; // Radius vekttall
 
-
     double alf = 0;
     gauss_laguerre(xgl,wgl, n_lag, alf);//For radiusen
 
@@ -76,17 +74,12 @@ void test_lag(){
    // cout<< xgl[1]<<endl;
     for (int i=1;i<=n_lag;i++){ //Radius 1
         cout << i << endl;
-        for (int j = 1; j<=n_lag; j++){//Radius 2
-
+        for (int j = 0; j<=n_leg; j++){//Radius 2
         for (int k = 0; k<n_leg; k++){//Theta 1
-        for (int l = 0; l<n_leg; l++){// Theta 2
 
-        for (int m = 0; m<n_leg; m++){// Phi 1
-        for (int n = 0; n<n_leg; n++){// Phi 2
-
-            int_gausslag += wgl[i]
-                * func(xgl[i]);
-}}}}}}
+            int_gausslag += wgl[i]*w1[j]*w2[k]
+                * func_2(xgl[i],x1[j],x2[k]);
+}}}
 
     cout<< int_gausslag<<endl;
     delete []xgl;

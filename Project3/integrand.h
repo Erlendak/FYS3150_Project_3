@@ -38,10 +38,10 @@ double func_cartesian(double x1,double y1, double z1, double x2, double y2, doub
         }
 }
 
-double func_polar(double r1, double t1, double p1, double r2, double t2, double p2){
-    /*func_polar(double r1,double t1, double p1, double r2, double t2, double p2):
+double func_spherical(double r1, double t1, double p1, double r2, double t2, double p2){
+    /*func_spherical(double r1,double t1, double p1, double r2, double t2, double p2):
      * Function that sets up the integral we're going to integrate.
-      This is a six-dimensional integral, made into polar coordinates.*/
+      This is a six-dimensional integral, made into spherical coordinates.*/
 
      double cosb = cos(t1)*cos(t2) + sin(t1)*sin(t2)*cos(p1-p2);
      //Function that we want to integrate
@@ -68,9 +68,9 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
 }
 */
 
-double func_polar_mc(double r1, double t1, double p1, double r2, double t2, double p2){
-    /*func_polar_mc(double r1,double theta1, double phi1, double r2, double theta2, double phi2)
-      We set up our function in polar coordinates as before, but without the exponential. This
+double func_spherical_mc(double r1, double t1, double p1, double r2, double t2, double p2){
+    /*func_spherical_mc(double r1,double theta1, double phi1, double r2, double theta2, double phi2)
+      We set up our function in spherical coordinates as before, but without the exponential. This
       is because our exponential distribution absorbs it.*/
 
     double cosb = cos(t1)*cos(t2) + sin(t1)*sin(t2)*cos(p1-p2);
@@ -96,7 +96,7 @@ double task3a(){
        between <-inf,inf>, but our c is an approximatio of infinity.*/
 
     clock_t start, finish;
-    int N = 27;
+    int N = 25;
     //Integration interval.
     int a = -3;
     int b = 3;
@@ -136,15 +136,15 @@ void task3b(){
     /*task3b():
      * Improved Gauss-Legendre/ Gauss-Laguerre.
        We set up weights and grid similar to how we did in task3a(),
-       but because we're in polar coordinates so we have to make adjustments.
+       but because we're in spherical coordinates so we have to make adjustments.
        We use Gauss-Legendre to find the weights and grid of phi and theta,
        and then we use Gauss-Laguerre to find the weights and grid of r.
        Gauss-Laguerre is defined from [0,inf).*/
 
     clock_t start, finish;
     double pi = 3.14159265;
-    int n_lag = 27;
-    int n_leg = 27;
+    int n_lag = 25;
+    int n_leg = 25;
     double *x1 = new double [n_lag];//Meshgrid for theta
     double *w1 = new double [n_lag];// Weight for theta
     double *x2 = new double [n_leg];//Meshgrid for phi
@@ -177,7 +177,7 @@ void task3b(){
         //cout<<wgl[i] <<" "<<wgl[j]<<"" "" <<w1[k] <<" "<<w2[m]<< "" "" << w1[l] <<" "<<w2[n]<<"" ""<<" "xgl[]<<
           // xgl[i] <<" "<<xgl[j]<<"" "" <<x1[k] <<" "<<x2[m]<< "" "" << x1[l] <<" "<<x2[n] <<endl;
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
-                * func_polar(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                * func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
                     //func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
 }}}}}}
     finish = clock();

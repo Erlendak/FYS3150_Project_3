@@ -16,10 +16,10 @@ using namespace arma;
     //task3a();
     //task3b();
     //test_ans();
-     test_lag();
-    //double integralening ;
-    //double _std;
-    //Brute_MonteCarlo(10000000, -3,3, integralening,_std);
-    //cout <<integralening <<endl;
+    //test_lag();
+    double integralening ;
+    double _std;
+    Brute_MonteCarlo(10000000, -3,3, integralening,_std);
+    cout <<integralening <<endl;
     return 0;
     }
