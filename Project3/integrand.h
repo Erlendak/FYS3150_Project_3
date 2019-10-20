@@ -96,9 +96,8 @@ double task3a(int N, double &_t){
        between <-inf,inf>, but our c is an approximatio of infinity.*/
 
     clock_t start, finish;
-    int N = 25;
+
     //Integration interval.
-    clock_t start, finish;
     cout<<N<<endl;
     int a = -3;
     int b = 3;
