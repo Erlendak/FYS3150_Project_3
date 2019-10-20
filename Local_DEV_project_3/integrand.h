@@ -38,10 +38,10 @@ double func_cartesian(double x1,double y1, double z1, double x2, double y2, doub
         }
 }
 
-double func_spherical(double r1, double t1, double p1, double r2, double t2, double p2){
-    /*func_spherical(double r1,double t1, double p1, double r2, double t2, double p2):
+double func_polar(double r1, double t1, double p1, double r2, double t2, double p2){
+    /*func_polar(double r1,double t1, double p1, double r2, double t2, double p2):
      * Function that sets up the integral we're going to integrate.
-      This is a six-dimensional integral, made into spherical coordinates.*/
+      This is a six-dimensional integral, made into polar coordinates.*/
 
      double cosb = cos(t1)*cos(t2) + sin(t1)*sin(t2)*cos(p1-p2);
      //Function that we want to integrate
@@ -68,9 +68,9 @@ double func_spherical(double r1,double theta1, double phi1, double r2, double th
 }
 */
 
-double func_spherical_mc(double r1, double t1, double p1, double r2, double t2, double p2){
-    /*func_spherical_mc(double r1,double theta1, double phi1, double r2, double theta2, double phi2)
-      We set up our function in spherical coordinates as before, but without the exponential. This
+double func_polar_mc(double r1, double t1, double p1, double r2, double t2, double p2){
+    /*func_polar_mc(double r1,double theta1, double phi1, double r2, double theta2, double phi2)
+      We set up our function in polar coordinates as before, but without the exponential. This
       is because our exponential distribution absorbs it.*/
 
     double cosb = cos(t1)*cos(t2) + sin(t1)*sin(t2)*cos(p1-p2);
@@ -87,7 +87,7 @@ double func_spherical_mc(double r1, double t1, double p1, double r2, double t2, 
 }
 
 
-double task3a(int N, double &_t){
+double task3a(){
     /*task3a():
      * Function where we do the Gauss-Legendre, brute force way.
        We set up weights and grid and then use 6 loops, one for
@@ -95,11 +95,8 @@ double task3a(int N, double &_t){
        so our interval is <-c,c>, where c is an integer. Legendre is defined
        between <-inf,inf>, but our c is an approximatio of infinity.*/
 
-    clock_t start, finish;
-    int N = 25;
+    int N = 27;
     //Integration interval.
-    clock_t start, finish;
-    cout<<N<<endl;
     int a = -3;
     int b = 3;
 
@@ -113,8 +110,8 @@ double task3a(int N, double &_t){
     //Gauss-Legendre method for a six dimensional
     //function.
     double gauss = 0.0;
-    start = clock();
     for (int i=0;i<N;i++){
+        cout << i << endl;
         for (int j = 0;j<N;j++){
         for (int k = 0;k<N;k++){
         for (int l = 0;l<N;l++){
@@ -123,23 +120,21 @@ double task3a(int N, double &_t){
             gauss+=w[i]*w[j]*w[k]*w[l]*w[m]*w[n]*func_cartesian(x[i],x[j],x[k],x[l],x[m],x[n]);
        }}}}}
        }
-    finish = clock();
-    _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
+
     delete [] x;
     delete [] w;
     return gauss;
 }
 
-double task3b(int N, double &_t){
+void task3b(){
     /*task3b():
      * Improved Gauss-Legendre/ Gauss-Laguerre.
        We set up weights and grid similar to how we did in task3a(),
-       but because we're in spherical coordinates so we have to make adjustments.
+       but because we're in polar coordinates so we have to make adjustments.
        We use Gauss-Legendre to find the weights and grid of phi and theta,
        and then we use Gauss-Laguerre to find the weights and grid of r.
        Gauss-Laguerre is defined from [0,inf).*/
-    cout<<N<<endl;
-    clock_t start, finish;
+
     double pi = 3.14159265;
     int n_lag = 25;
     int n_leg = 25;
@@ -160,8 +155,9 @@ double task3b(int N, double &_t){
     gauss_laguerre(xgl,wgl, n_lag, alf);//For radiusen
 
     double int_gausslag = 0.0;
-    start = clock();
+   // cout<< xgl[1]<<endl;
     for (int i=1;i<=n_lag;i++){ //Radius 1
+        cout << i << endl;
         for (int j = 1; j<=n_lag; j++){//Radius 2
 
         for (int k = 0; k<n_leg; k++){//Theta 1
@@ -172,18 +168,19 @@ double task3b(int N, double &_t){
         //cout<<wgl[i] <<" "<<wgl[j]<<"" "" <<w1[k] <<" "<<w2[m]<< "" "" << w1[l] <<" "<<w2[n]<<"" ""<<" "xgl[]<<
           // xgl[i] <<" "<<xgl[j]<<"" "" <<x1[k] <<" "<<x2[m]<< "" "" << x1[l] <<" "<<x2[n] <<endl;
             int_gausslag += wgl[i]*wgl[j]*w1[k]*w1[l]*w2[m]*w2[n]
-                * func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                * func_polar(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
+                    //func_polar_lag(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
                     //func_spherical(xgl[i], x1[k], x2[m],xgl[j],x1[l],x2[n]);
 }}}}}}
-    finish = clock();
-    _t = ((((double)finish - (double)start)/CLOCKS_PER_SEC));
+
+    cout<< int_gausslag<<endl;
     delete []xgl;
     delete []wgl;
     delete []x1;
     delete []w1;
     delete []x2;
     delete []w2;
-    return(int_gausslag);
+
 }
 
 
