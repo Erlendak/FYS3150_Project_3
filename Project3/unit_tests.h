@@ -2,6 +2,7 @@
 #define UNIT_TESTS_H
 #include <methods.h>
 #include <integrand.h>
+#include <monte_carlo.h>
 
 double func(double x1){
     return x1*x1;
@@ -37,15 +38,15 @@ void test_leg(){
             }
 };
 
-void test_Laguerre(){
+void test_laguerre(){
     /*
     Unit test for our Gauss Laguerre. We test if our implementiaion off Gauss Laguere will calculate the integral
     with 20 integration points to our expected solution 0.19478557.
     */
 
     double expected = 0.19478557;
-    double _t;
-    double tested = task3b(20,_t);
+    double t;
+    double tested = task3b(20,t);
     double tol = 0.00001;
     try{
         if (abs(abs(tested)-abs(expected)) > tol){
@@ -56,5 +57,69 @@ void test_Laguerre(){
             cerr << msg <<endl;
             }
 };
+
+void test_monte_carlo(){
+    /*
+    Unit test for our all Monte Carlo methods. We are testing that Monte Carlo methods gets
+    sufficient varriance to make a accurate integral.
+    */
+    double t;
+    double vari;
+    double tol = 0.1;
+
+    Brute_MonteCarlo(10000000,t,vari);
+
+
+    try{
+        if (vari > tol){
+        throw "Warning: Integration using Brute Force Monte Carlo method does not give a satisfying variance, there may be a serious problem that needs to be checked up upon.";
+    }
+    }
+        catch (const char* msg){
+            cerr << msg <<endl;
+            }
+
+    Importance_MonteCarlo(10000000,t,vari);
+
+
+    try{
+        if (vari > tol){
+        throw "Warning: Integration using Importance Sampling method method does not give a satisfying variance, there may be a serious problem that needs to be checked up upon.";
+    }
+    }
+        catch (const char* msg){
+            cerr << msg <<endl;
+     }
+
+    Parallel_Brute_MonteCarlo(10000000,t,vari);
+    try{
+        if (vari > tol){
+        throw "Warning: Integration using Parallell Brute Force Monte Carlo method does not give a satisfying variance, there may be a serious problem that needs to be checked up upon.";
+    }
+    }
+        catch (const char* msg){
+            cerr << msg <<endl;
+            }
+
+    Parallel_Importance_MonteCarlo(10000000,t,vari);
+
+
+    try{
+        if (vari > tol){
+        throw "Warning: Integration using Parallell Importance Sampling method method does not give a satisfying variance, there may be a serious problem that needs to be checked up upon.";
+    }
+    }
+        catch (const char* msg){
+            cerr << msg <<endl;
+            }
+};
+void tests(){
+/*
+Calls all the above tests at once. For a better looking main.
+*/
+    test_leg();
+    test_laguerre();
+    test_monte_carlo();
+}
 
 #endif // UNIT_TESTS_H
