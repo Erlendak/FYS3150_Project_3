@@ -11,14 +11,7 @@
 #include <cstdio>
 using namespace std;
 
-double Brute_MonteCarlo(int n, double  &_t, double  &std){
-    /* Brute_MonteCarlo(int n, double a, double b, double  &integral, double  &std):
-       In the Brute Force Monte Carlo method we use the same integrand as we did in Gauss-Legendre,
-       and we use it in cartesian coordiantes. We also use uniform distribution and a random
-       number generator to find random numbers within our interval. We put the random numbers
-       into our integrand. We do this several times and the sum times the Jacobi determinant
-       is the answer to our integral.*/
-        cout<< n <<endl;
+double Brute_MonteCarlo(int n, double  &_t, double  &_sig){
         clock_t start, finish;
         double a = -3;
         double b = 3;
@@ -30,12 +23,11 @@ double Brute_MonteCarlo(int n, double  &_t, double  &std){
         mt19937_64 gen5(ran());
         mt19937_64 gen6(ran());
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0); // (a,b)
-        double *x = new double [n];
+        double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
         double mc = 0.0;
         double sigma = 0.0;
         int i;
-        //Jacobi determinant for uniform distribution
         double jacob = pow((b-a),6);
 
         start = clock();
@@ -61,7 +53,8 @@ double Brute_MonteCarlo(int n, double  &_t, double  &std){
         }
         double _n = n;
         sigma = sigma*jacob/((double)_n );
-        std = sqrt(sigma)/sqrt((double)_n);
+        _sig = sigma;
+        //std = sqrt(sigma)/sqrt((double)_n);
         double integral = mc*jacob;
         delete [] x;
         return( integral);
@@ -69,13 +62,7 @@ double Brute_MonteCarlo(int n, double  &_t, double  &std){
 
 
 
-double Importance_MonteCarlo(int n, double  &_t, double & std){
-    /* Importance_MonteCarlo(int n, double a, double b, double  &integral, double  &std):
-       In this improved version of Monte Carlo we use spherical coordinates instead of cartesian coordinates.
-       We also use exponential distribution to find the numbers our interval for the radius, and
-       uniform distribution for the angles. On top of this, because we're using exponential distribution
-       we can simplify parts of our integrand because it gets absorbed.*/
-        cout<< n <<endl;
+double Importance_MonteCarlo(int n, double  &_t, double & _sig){
         double pi = 3.14159265;
         clock_t start, finish;
         random_device ran;
@@ -88,14 +75,14 @@ double Importance_MonteCarlo(int n, double  &_t, double & std){
         exponential_distribution<double> Exponential_R(4);
         uniform_real_distribution<double> UniformTheta(0,pi);
         uniform_real_distribution<double> UniformPhi(0,2*pi);
-
         double * x = new double [n];
         double r1, r2, t1, t2, p1, p2, f;
         double mc = 0.0;
+
         double sigma = 0.0;
 
-        //Jacobi determinant for exponential distribution
-        double jacob = 4*pi*pi*pi*pi/16;
+        double jacob = 4*pi*pi*pi*pi /16;
+
 
         int i;
         start = clock();
@@ -109,7 +96,7 @@ double Importance_MonteCarlo(int n, double  &_t, double & std){
                 p1 = UniformPhi(gen5);
                 p2 = UniformPhi(gen6);
 
-                f = func_spherical_mc(r1, t1, p1, r2, t2, p2);
+                f = func_polar_mc(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
         }
@@ -121,28 +108,24 @@ double Importance_MonteCarlo(int n, double  &_t, double & std){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
         sigma = sigma*jacob/((double)n );
-        std = sqrt(sigma)/sqrt((double)n);
+        _sig = sigma;
+        //std = sqrt(sigma)/sqrt((double)n);
         double integral = mc*jacob;
         delete [] x;
         return( integral);
 }
 
-double Parallel_Brute_MonteCarlo(int n, double  &_t, double  &std){
-    /* Parallel_Brute_MonteCarlo(int n, double  &_t, double  &std):
-        We parallellize the Brute Force Monte Carlo method with OpenMP
-        so we can use more cores and threads when we run the code.
-        This should give us a speed-up.*/
-        cout<< n <<endl;
+double Parallel_Brute_MonteCarlo(int n, double  &_t, double  &_sig){
         clock_t start, finish;
         double a = -3;
         double b = 3;
         random_device ran;
-        mt19937_64 gen1(ran());
-        mt19937_64 gen2(ran());
-        mt19937_64 gen3(ran());
-        mt19937_64 gen4(ran());
-        mt19937_64 gen5(ran());
-        mt19937_64 gen6(ran());
+        mt19937_64 gen1(ran()+omp_get_thread_num());
+        mt19937_64 gen2(ran()+omp_get_thread_num());
+        mt19937_64 gen3(ran()+omp_get_thread_num());
+        mt19937_64 gen4(ran()+omp_get_thread_num());
+        mt19937_64 gen5(ran()+omp_get_thread_num());
+        mt19937_64 gen6(ran()+omp_get_thread_num());
         uniform_real_distribution<double> RandomNumberGenerator(0.0,1.0); // (a,b)
         double * x = new double [n];
         double x1, x2, y1, y2, z1, z2, f;
@@ -173,8 +156,9 @@ double Parallel_Brute_MonteCarlo(int n, double  &_t, double  &std){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
         double _n = n;
-        sigma = sigma*jacob/((double)_n );
-        std = sqrt(sigma)/sqrt((double)_n);
+        sigma = sigma*jacob/((double)_n*n );
+        _sig = sigma;//((double)n );
+        //std = sqrt(sigma)/sqrt((double)_n);
         double integral = mc*jacob;
         delete [] x;
         return( integral);
@@ -182,21 +166,16 @@ double Parallel_Brute_MonteCarlo(int n, double  &_t, double  &std){
 
 
 
-double Parallel_Importance_MonteCarlo(int n, double  &_t, double & std){
-    /* Parallel_Importance_MonteCarlo(int n, double  &_t, double & std)
-        We parallellize the Importance Monte Carlo method with OpenMP
-        so we can use more cores and threads when we run the code.
-        This should give us a speed-up.*/
-        cout<< n <<endl;
+double Parallel_Importance_MonteCarlo(int n, double  &_t, double & _sig){
         double pi = 3.14159265;
         clock_t start, finish;
         random_device ran;
-        mt19937_64 gen1(ran());
-        mt19937_64 gen2(ran());
-        mt19937_64 gen3(ran());
-        mt19937_64 gen4(ran());
-        mt19937_64 gen5(ran());
-        mt19937_64 gen6(ran());
+        mt19937_64 gen1(ran()+omp_get_thread_num());
+        mt19937_64 gen2(ran()+omp_get_thread_num());
+        mt19937_64 gen3(ran()+omp_get_thread_num());
+        mt19937_64 gen4(ran()+omp_get_thread_num());
+        mt19937_64 gen5(ran()+omp_get_thread_num());
+        mt19937_64 gen6(ran()+omp_get_thread_num());
         exponential_distribution<double> Exponential_R(4);
         uniform_real_distribution<double> UniformTheta(0,pi);
         uniform_real_distribution<double> UniformPhi(0,2*pi);
@@ -221,7 +200,7 @@ double Parallel_Importance_MonteCarlo(int n, double  &_t, double & std){
                 p1 = UniformPhi(gen5);
                 p2 = UniformPhi(gen6);
 
-                f = func_spherical_mc(r1, t1, p1, r2, t2, p2);
+                f = func_polar_mc(r1, t1, p1, r2, t2, p2);
                 mc += f;
                 x[i] = f;
         }
@@ -232,8 +211,9 @@ double Parallel_Importance_MonteCarlo(int n, double  &_t, double & std){
         for (i = 0; i < n; i++){
                 sigma += (x[i] - mc)*(x[i] - mc);
         }
-        sigma = sigma*jacob/((double)n );
-        std = sqrt(sigma)/sqrt((double)n);
+        sigma = sigma*jacob/((double)n*n );
+        _sig = sigma;//((double)n );
+        //std = sqrt(sigma)/sqrt((double)n);
         double integral = mc*jacob;
         delete [] x;
         return( integral);
@@ -242,3 +222,4 @@ double Parallel_Importance_MonteCarlo(int n, double  &_t, double & std){
 
 
 #endif // MONTE_CARLO_H
+
