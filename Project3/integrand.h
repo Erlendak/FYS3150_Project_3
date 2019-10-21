@@ -86,9 +86,8 @@ double func_polar_mc(double r1, double t1, double p1, double r2, double t2, doub
         return 0;
 }
 
-
 double task3a(int N, double &_t){
-    /*task3a():
+    /*task3a(int N, double &_t):
      * Function where we do the Gauss-Legendre, brute force way.
        We set up weights and grid and then use 6 loops, one for
        every dimension in our function. Here we use Legendre polynomials
@@ -129,7 +128,7 @@ double task3a(int N, double &_t){
 }
 
 double task3b(int N, double &_t){
-    /*task3b():
+    /*task3b(int N, double &_t):
      * Improved Gauss-Legendre/ Gauss-Laguerre.
        We set up weights and grid similar to how we did in task3a(),
        but because we're in polar coordinates so we have to make adjustments.
@@ -183,7 +182,5 @@ double task3b(int N, double &_t){
     delete []w2;
     return(int_gausslag);
 }
-
-
 
 #endif // INTEGRAND_H

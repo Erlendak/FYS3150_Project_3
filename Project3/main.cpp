@@ -12,6 +12,10 @@ using namespace std;
 using namespace arma;
 
     int main(){
+        /*In the whole main function we're only printing out results or
+         * sending them to dat files so we can plot them in Python.
+         *
+        */
         int nthreads = omp_get_num_threads();
         printf("Using %d threads outside parallel loop\n",nthreads);
         int mthreads = omp_get_max_threads();
